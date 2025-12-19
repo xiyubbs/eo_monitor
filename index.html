@@ -132,7 +132,7 @@
             <!-- Custom Time Inputs -->
             <div id="customTimeInputs" class="hidden flex-wrap items-center gap-2 mt-2 w-full sm:w-auto">
                 <div class="flex items-center space-x-1">
-                    <input type="number" id="customDays" placeholder="0" class="h-8 w-16 rounded-md border border-slate-200 px-2 text-sm" min="0">
+                    <input type="number" id="customDays" placeholder="0" class="h-8 w-16 rounded-md border border-slate-200 px-2 text-sm" min="0" max="31">
                     <span class="text-xs">天</span>
                 </div>
                 <div class="flex items-center space-x-1">
@@ -148,6 +148,7 @@
                     <span class="text-xs">秒</span>
                 </div>
                 <button onclick="refreshData()" class="h-8 px-3 bg-slate-900 text-white rounded-md text-xs hover:bg-slate-800">应用</button>
+                <span id="timeRangeError" class="text-red-500 text-xs font-medium ml-2"></span>
             </div>
             <div class="flex items-center space-x-2">
                 <label for="interval" class="text-sm font-medium">粒度:</label>
@@ -916,7 +917,17 @@
                     const minutes = parseInt(document.getElementById('customMinutes').value) || 0;
                     const seconds = parseInt(document.getElementById('customSeconds').value) || 0;
                     
-                    const totalMs = ((days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
+                    let totalMs = ((days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
+                    const maxMs = 31 * 24 * 60 * 60 * 1000; // 31 days limit
+                    const errorEl = document.getElementById('timeRangeError');
+
+                    if (totalMs > maxMs) {
+                        if (errorEl) errorEl.innerText = '自定义时间范围不能超过 31 天，已自动为您调整为 31 天。';
+                        totalMs = maxMs;
+                    } else {
+                        if (errorEl) errorEl.innerText = '';
+                    }
+
                     if (totalMs > 0) {
                         startTime = new Date(now.getTime() - totalMs);
                     } else {
@@ -1372,6 +1383,7 @@
             });
 
             const option = {
+                title: { show: false },
                 tooltip: { 
                     trigger: 'axis',
                     formatter: (params) => {
@@ -1555,9 +1567,12 @@
             
             // Reset error style if applicable
             const kpiEl = document.getElementById('kpi_security_hits');
-            if (kpiEl && kpiEl.parentElement.querySelector('p').classList.contains('text-red-500')) {
-                kpiEl.parentElement.querySelector('p').innerText = "DDoS/CC 防护总拦截次数";
-                kpiEl.parentElement.querySelector('p').classList.remove('text-red-500');
+            if (kpiEl) {
+                const p = kpiEl.parentElement.querySelector('p');
+                if (p) {
+                    p.innerText = "DDoS/CC 防护总拦截次数";
+                    p.classList.remove('text-red-500');
+                }
             }
 
             const series = [];
@@ -1591,6 +1606,7 @@
             }
 
             const option = {
+                title: { show: false },
                 tooltip: { 
                     trigger: 'axis', 
                     axisPointer: { type: 'cross', label: { backgroundColor: '#6a7985' } }

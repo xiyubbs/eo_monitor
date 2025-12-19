@@ -34,13 +34,14 @@
 
 1. 克隆仓库：
    ```bash
-   git clone https://github.com/YourUsername/EdgeOne_ana.git
-   cd EdgeOne_ana
+   git clone https://github.com/afoim/eo_monitior
+   cd eo_monitior
    ```
 
 2. 安装依赖：
    ```bash
-   npm install
+   npm install -g edgeone
+   edgeone login
    ```
 
 3. 配置密钥：
@@ -53,15 +54,15 @@
 
 4. 启动服务：
    ```bash
-   npm start
+   edgeone pages dev
    ```
 
-5. 访问 `http://localhost:3000`。
+5. 访问 `http://localhost:8088`。
 
 ## 🔑 权限说明
 
 使用的腾讯云访问密钥必须拥有 **EdgeOne 只读访问权限** (`QcloudTEOReadOnlyaccess`)。
-请前往访问管理控制台创建和管理密钥：
+请前往访问管理控制台创建和管理密钥（只需要 **编程访问**）：
 - **国内版 (China Station)**: [https://console.cloud.tencent.com/cam/user/userType](https://console.cloud.tencent.com/cam/user/userType)
 - **海外版 (International Station)**: [https://console.tencentcloud.com/cam/user/userType](https://console.tencentcloud.com/cam/user/userType)
 
